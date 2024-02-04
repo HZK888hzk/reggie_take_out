@@ -6,7 +6,7 @@ spring:
     datasource:
         druid:
             driver-class-name: com.mysql.jdbc.Driver
-            url: jdbc:mysql://localhost/reggie?serverTimezone=UTC
+            url: jdbc:mysql://192.168.190.135/reggie?serverTimezone=UTC
             username: root
             password: 123456
     mvc:
