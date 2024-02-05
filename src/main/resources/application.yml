@@ -1,18 +1,19 @@
 server:
     port: 8080
 spring:
+    redis:
+        host: 192.168.190.136
+        port: 6379
+        database: 0
     application:
         name: reggie_take_out
     datasource:
         druid:
             driver-class-name: com.mysql.jdbc.Driver
-            url: jdbc:mysql://192.168.190.135/reggie?serverTimezone=UTC
+            url: jdbc:mysql://localhost/reggie?serverTimezone=UTC
             username: root
-            password: root
-    redis:
-        host: 192.168.1.12
-        port: 6379
-        database: 0
+            password: 123456
+
     mvc:
         hiddenmethod:
             filter:
@@ -24,7 +25,6 @@ mybatis-plus:
         log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     global-config:
         db-config:
-            #???????
             id-type: ASSIGN_ID
 reggie:
   path: D:\img\

@@ -17,7 +17,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category  {
+public class Category  implements Serializable{
 
     @TableId
     private Long id;
