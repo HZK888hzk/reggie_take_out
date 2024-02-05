@@ -78,10 +78,14 @@ public class DishController {
     }
     /**
      * 上面查询出来，完后修改菜品
+     * 修改的时候是根据getCategoryId去修改的，那么就会清除CategoryId对应的套餐或者种类
      */
     @PutMapping
     public Result<String> insertBySave(@RequestBody DishDto dishDto){
         dishService.updateDish(dishDto);
+        //在新增菜品或者套餐的时候，我们需要清理redis的缓存
+        String key = "dish_" +dishDto.getCategoryId() + "_1";
+        redisTemplate.delete(key);
         return Result.success("菜品修改成功");
     }
 
@@ -94,6 +98,9 @@ public class DishController {
     public Result<String> insert(@RequestBody DishDto dishDto){
         log.info("写入的信息为{}",dishDto);
         dishService.saveByHHH(dishDto);
+        //在新增菜品或者套餐的时候，我们需要清理redis的缓存
+        String key = "dish_" +dishDto.getCategoryId() + "_1";
+        redisTemplate.delete(key);
          return Result.success("新增菜品成功");
     }
 
@@ -111,19 +118,6 @@ public class DishController {
         }
         return Result.success("菜品状态更改成功");
     }
-    /**
-     * 在添加套餐哪里有一个菜品展示
-     * 就是根据categoryId来查询菜品信息
-     */
-   /* @GetMapping("/list")
-    public Result<List<Dish>> selectById(Dish dish){
-        log.info("接收到的id是 {}",dish.getId());
-        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(dish.getCategoryId() !=null,Dish::getCategoryId,dish.getId());
-        lambdaQueryWrapper.eq(Dish::getStatus,1);
-        List<Dish> dishList = dishService.list(lambdaQueryWrapper);
-        return Result.success(dishList);
-    }*/
 
     /**
      * 移动端的查看菜品信息
@@ -133,12 +127,12 @@ public class DishController {
      */
     @GetMapping("/list")
     public Result<List<DishDto>> selectById(Dish dish){
-        List<DishDto> dishDtoList =null;
+        List<DishDto> dishDtoList = null;
         //先从redis中查询
         //我们先构造一个key，就是从redis中查询的那个key
         String key = "dish_" + dish.getCategoryId() +"_"+dish.getStatus();
         //先强转为object ,再墙砖为list
-        dishDtoList = (List<DishDto>) redisTemplate.opsForValue().get(key);
+        dishDtoList = (List<DishDto>)  redisTemplate.opsForValue().get(key);
 
         //如果根据key查询到的这个集合有数据则直接输出
         if (dishDtoList != null){
@@ -171,7 +165,7 @@ public class DishController {
             return dishDto;
         }).collect(Collectors.toList());
         //查询完成以后，我们将数据缓存到redis中
-        redisTemplate.opsForValue().set(key, dishDtoList.toString(),60, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(key, dishDtoList,60, TimeUnit.MINUTES);
         return Result.success(dishDtoList);
     }
 
