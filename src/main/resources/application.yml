@@ -5,6 +5,9 @@ spring:
         host: 192.168.190.136
         port: 6379
         database: 0
+    cache:
+      redis:
+          time-to-live: 1800000  #缓存的过期时间
     application:
         name: reggie_take_out
     datasource:

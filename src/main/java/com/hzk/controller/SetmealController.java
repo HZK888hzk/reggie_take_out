@@ -8,6 +8,8 @@ import com.hzk.service.SetmealService;
 import com.hzk.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +45,7 @@ public class SetmealController {
      * 新增套餐
      */
     @PostMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public Result<String> InsertTTT(@RequestBody SeteamlDto seteamlDto){
         log.info("接收到的数据：{}",seteamlDto);
         setmealService.insertByHzk(seteamlDto);
@@ -72,8 +75,12 @@ public class SetmealController {
      * 删除或者批量删除
      * 售卖的状态下不能删除，必须先停售才能删除
      * 删除套餐的时候还需要删除套餐的关联表的数据
+     *
+     * @CacheEvict(value = "setmealCache",allEntries = true)
+     * 就是当实现删除操作就清除这个缓存，allEntries = true指的是清除所有的缓存
      */
     @DeleteMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public Result<String> delectByIds(@RequestParam List<Long> ids){
         log.info("接收的id{}",ids);
         setmealService.removeWithDish(ids);
@@ -95,8 +102,15 @@ public class SetmealController {
     }
     /**
      * 移动端的套餐查询
+     * value 就是缓存的名称
+     * key 就是缓存id  ，就是一个缓存名称下有多个缓存，根据id来区分
+     * 这个id一般就是多个查询条件的组合
+     * @Cacheable(value = "" ,key = ”“)
+     * #setmeal就是获取当前对象
+     * 这个Result返回结果要实现序列化
      */
     @GetMapping("/list")
+    @Cacheable(value = "setmealCache",key = "#setmeal.categoryId +'_' +#setmeal.status")
     public Result<List<Setmeal>> list(Setmeal setmeal){
         log.info("接收到的套餐id室{}",setmeal.getCategoryId());
         Long categoryId = setmeal.getCategoryId();
