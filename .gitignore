@@ -36,3 +36,7 @@ third-party/nacos/data/
 third-party/nacos/work/
 
 file/
+
+../.idea
+../titignore
+../README
