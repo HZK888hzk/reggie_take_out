@@ -37,6 +37,7 @@ third-party/nacos/work/
 
 file/
 
-../.idea
-../titignore
-../README
+.idea
+**/.gitignore
+**/README.MD
+**/target/
