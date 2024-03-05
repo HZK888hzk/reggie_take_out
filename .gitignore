@@ -37,7 +37,10 @@ third-party/nacos/work/
 
 file/
 
+#忽略文件
+
 .idea
+
 **/.gitignore
-**/README.MD
+
 **/target/
