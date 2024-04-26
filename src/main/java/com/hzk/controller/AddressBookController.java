@@ -113,7 +113,7 @@ public class AddressBookController {
      */
     @DeleteMapping
     public Result<String> delect(Long ids){
-        log.info("获得得地址id是 {}",ids);
+        log.info("获得地址id是 {}",ids);
         boolean id = addressBookService.removeById(ids);
         if (id==true){
             return Result.success("地址删除成功");
